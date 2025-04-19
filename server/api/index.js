@@ -18,13 +18,13 @@ app.use(cors());
 // serve uploads
 app.use("/uploads", express.static("./uploads"));
 
-app.use("/api/auth", authRoutes);
-app.use("/api/users", userRoutes);
-app.use("/api/cars", carRoutes);
-app.use("/api/rentals", rentalRoutes);
-app.use("/api/reviews", reviewRoutes);
-app.use("/api/boss", bossRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
+app.use("/cars", carRoutes);
+app.use("/rentals", rentalRoutes);
+app.use("/reviews", reviewRoutes);
+app.use("/boss", bossRoutes);
+app.use("/dmin", adminRoutes);
 
 // export the handler that Vercel will invoke
 export const handler = serverless(app);
