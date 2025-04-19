@@ -1,4 +1,4 @@
-// server/routes/carRoutes.js
+// File: server/routes/carRoutes.js
 import express from "express";
 import {
   addCar,
@@ -12,8 +12,7 @@ import {
   getCarCategories,
 } from "../controllers/carController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
-// Use the uploadCarFiles middleware (disk storage in this example)
-import { uploadCarFiles } from "../middleware/uploadMiddleware.js";
+import { uploadCarFiles } from "../middleware/uploadMiddleware.js"; // Named import
 
 const router = express.Router();
 
