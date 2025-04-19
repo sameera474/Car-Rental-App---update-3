@@ -28,3 +28,4 @@ app.use("/api/admin", adminRoutes);
 
 // export the handler that Vercel will invoke
 export const handler = serverless(app);
+export default app;
