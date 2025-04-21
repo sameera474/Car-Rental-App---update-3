@@ -14,6 +14,7 @@ import {
 import { protect, authorize } from "../middleware/authMiddleware.js";
 import { uploadCarFiles } from "../middleware/uploadMiddleware.js";
 import { deleteCar } from "../controllers/carController.js";
+import { toggleFeatured } from "../controllers/carController.js";
 
 const router = express.Router();
 
@@ -43,5 +44,11 @@ router.put(
 router.put("/:id/remove", protect, authorize("manager", "admin"), removeCar);
 
 router.delete("/:id", protect, authorize("manager", "admin"), deleteCar);
+router.patch(
+  "/:id/featured",
+  protect,
+  authorize("manager", "admin"),
+  toggleFeatured
+);
 
 export default router;

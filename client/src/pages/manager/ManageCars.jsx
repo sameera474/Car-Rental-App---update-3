@@ -19,6 +19,7 @@ import {
   DialogContent,
   DialogActions,
   TextField,
+  Switch,
 } from "@mui/material";
 import { Delete, Edit, CloudUpload } from "@mui/icons-material";
 import axiosInstance from "../../services/axiosInstance";
@@ -109,6 +110,17 @@ const ManageCars = () => {
       setCars((prev) => prev.filter((c) => c._id !== carId));
     } catch (err) {
       setError("Failed to remove car");
+    }
+  };
+  const handleToggleFeatured = async (carId, newValue) => {
+    try {
+      const { data: updatedCar } = await axiosInstance.patch(
+        `/cars/${carId}/featured`,
+        { featured: newValue }
+      );
+      setCars((prev) => prev.map((c) => (c._id === carId ? updatedCar : c)));
+    } catch (err) {
+      setError("Failed to update featured status");
     }
   };
 
@@ -275,7 +287,22 @@ const ManageCars = () => {
                     onClick={() => handleDelete(car._id)}
                   >
                     Remove
-                  </Button>
+                  </Button>{" "}
+                  {/* FEATURE toggle */}
+                  <Box
+                    sx={{ ml: "auto", display: "flex", alignItems: "center" }}
+                  >
+                    <Typography variant="body2" sx={{ mr: 1 }}>
+                      Featured
+                    </Typography>
+                    <Switch
+                      checked={Boolean(car.featured)}
+                      onChange={(e) =>
+                        handleToggleFeatured(car._id, e.target.checked)
+                      }
+                      color="primary"
+                    />
+                  </Box>
                 </Box>
               </CardContent>
             </Card>

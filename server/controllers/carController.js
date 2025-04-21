@@ -229,3 +229,16 @@ export const deleteCar = async (req, res) => {
     res.status(500).json({ message: "Error deleting car" });
   }
 };
+export const toggleFeatured = async (req, res) => {
+  try {
+    const car = await Car.findById(req.params.id);
+    if (!car) return res.status(404).json({ message: "Car not found" });
+    // Expect body.featured to be a boolean
+    car.featured = Boolean(req.body.featured);
+    await car.save();
+    res.json(car);
+  } catch (err) {
+    console.error("Error toggling featured:", err);
+    res.status(500).json({ message: "Error toggling featured" });
+  }
+};
