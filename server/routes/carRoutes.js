@@ -12,7 +12,8 @@ import {
   getCarCategories,
 } from "../controllers/carController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
-import { uploadCarFiles } from "../middleware/uploadMiddleware.js"; // Named import
+import { uploadCarFiles } from "../middleware/uploadMiddleware.js";
+import { deleteCar } from "../controllers/carController.js";
 
 const router = express.Router();
 
@@ -40,5 +41,7 @@ router.put(
   updateCar
 );
 router.put("/:id/remove", protect, authorize("manager", "admin"), removeCar);
+
+router.delete("/:id", protect, authorize("manager", "admin"), deleteCar);
 
 export default router;

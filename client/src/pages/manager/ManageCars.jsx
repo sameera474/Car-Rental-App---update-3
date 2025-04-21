@@ -105,12 +105,8 @@ const ManageCars = () => {
   const handleDelete = async (carId) => {
     if (!window.confirm("Are you sure you want to remove this car?")) return;
     try {
-      await axiosInstance.put(`/cars/${carId}/remove`);
-      setCars((prev) =>
-        prev.map((c) =>
-          c._id === carId ? { ...c, status: "removed", isAvailable: false } : c
-        )
-      );
+      await axiosInstance.delete(`/cars/${carId}`);
+      setCars((prev) => prev.filter((c) => c._id !== carId));
     } catch (err) {
       setError("Failed to remove car");
     }

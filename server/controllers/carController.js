@@ -190,3 +190,42 @@ export const getCarCategories = async (req, res) => {
     res.status(500).json({ message: "Error fetching car categories" });
   }
 };
+
+export const deleteCar = async (req, res) => {
+  try {
+    const car = await Car.findById(req.params.id);
+    if (!car) {
+      return res.status(404).json({ message: "Car not found" });
+    }
+
+    // OPTIONAL: delete the main image file from disk
+    if (car.image && car.image.includes("/uploads/")) {
+      const filePath = path.join(
+        __dirname,
+        "uploads",
+        path.basename(car.image)
+      );
+      fs.unlink(filePath, (err) => {
+        if (err) console.warn("Failed to delete image file:", err);
+      });
+    }
+
+    // OPTIONAL: delete gallery images
+    if (Array.isArray(car.gallery)) {
+      car.gallery.forEach((url) => {
+        if (url.includes("/uploads/")) {
+          const fp = path.join(__dirname, "uploads", path.basename(url));
+          fs.unlink(fp, (err) => {
+            if (err) console.warn("Failed to delete gallery image:", err);
+          });
+        }
+      });
+    }
+
+    await car.deleteOne();
+    res.json({ message: "Car permanently deleted", id: req.params.id });
+  } catch (error) {
+    console.error("Error deleting car:", error);
+    res.status(500).json({ message: "Error deleting car" });
+  }
+};
