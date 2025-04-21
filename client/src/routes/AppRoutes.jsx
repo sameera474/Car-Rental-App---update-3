@@ -62,6 +62,8 @@ const AppRoutes = () => {
         <Route path="/cars/featured" element={<FeaturedCars />} />
         <Route path="/cars/popular" element={<PopularCars />} />
         <Route path="/reviews" element={<AllReviews />} />
+        <Route path="/cars" element={<CarList />} />
+        <Route path="/cars/category/:category" element={<CarList />} />
         <Route path="/reviewform" element={<ReviewForm />} />
 
         {/* User Routes */}

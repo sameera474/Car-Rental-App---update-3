@@ -11,59 +11,50 @@ import {
   Alert,
   Chip,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../services/axiosInstance";
 import { useAuth } from "../../context/AuthContext";
 import RentalDialog from "./RentalDialog"; // Your reusable rental dialog
 
 const CarList = () => {
+  const { category } = useParams(); // e.g. "economy"
   const [cars, setCars] = useState([]);
   const [selectedCar, setSelectedCar] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const { user } = useAuth();
 
   useEffect(() => {
     const fetchCars = async () => {
+      setLoading(true);
       try {
-        const { data } = await axiosInstance.get("/cars/available");
+        const url = category ? `/cars/category/${category}` : "/cars/available";
+        const { data } = await axiosInstance.get(url);
         setCars(data);
-      } catch (error) {
-        console.error("Error fetching cars:", error);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load cars");
+      } finally {
+        setLoading(false);
       }
     };
     fetchCars();
-  }, []);
+  }, [category]);
 
-  const handleRent = async (carId, dates) => {
-    // Only role "user" is allowed to rent
-    if (!user) {
-      navigate("/login");
-      return;
-    }
-    if (user.role !== "user") {
-      alert("Only users are allowed to rent a car.");
-      return;
-    }
-    try {
-      await axiosInstance.post("/rentals", {
-        carId,
-        startDate: dates.start.toISOString(),
-        endDate: dates.end.toISOString(),
-      });
-      // Refresh available cars after rental
-      const { data } = await axiosInstance.get("/cars/available");
-      setCars(data);
-      alert("Car rented successfully!");
-    } catch (error) {
-      alert(error.response?.data?.message || "Rental failed");
-    }
-  };
+  if (loading) return <CircularProgress sx={{ m: 4, display: "block" }} />;
+  if (error) return <Alert severity="error">{error}</Alert>;
 
   return (
     <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Available Cars
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{ textTransform: category ? "capitalize" : "none" }}
+      >
+        {category ? `${category} Cars` : "Available Cars"}
       </Typography>
+
       <Grid container spacing={3}>
         {cars.map((car) => (
           <Grid item xs={12} sm={6} md={4} key={car._id}>
@@ -104,25 +95,30 @@ const CarList = () => {
                     color={car.isAvailable ? "success" : "error"}
                   />
                 </Box>
+
                 <Typography variant="body2" sx={{ mt: 1 }}>
                   ${car.pricePerDay}/day
                 </Typography>
+
                 <Box sx={{ mt: 2, display: "flex", gap: 2 }}>
                   <Button
                     variant="contained"
                     onClick={() => {
-                      // Only allow "Rent Now" if role === "user"
-                      if (user && user.role === "user") {
-                        setSelectedCar(car);
-                      } else if (!user) {
+                      if (!user) {
                         navigate("/login");
+                      } else if (user.role === "user") {
+                        setSelectedCar(car);
                       } else {
-                        alert("Viewing Only. Only users can rent cars.");
+                        alert("Only users can rent cars.");
                       }
                     }}
-                    disabled={!user || (user && user.role !== "user")}
+                    disabled={!car.isAvailable}
                   >
-                    {user && user.role === "user" ? "Rent Now" : "Viewing Only"}
+                    {user && user.role === "user"
+                      ? "Rent Now"
+                      : user
+                      ? "Viewing Only"
+                      : "Login to Rent"}
                   </Button>
                   <Button
                     variant="outlined"
@@ -142,7 +138,26 @@ const CarList = () => {
         car={selectedCar}
         open={Boolean(selectedCar)}
         onClose={() => setSelectedCar(null)}
-        onRent={handleRent}
+        onRent={async (carId, dates) => {
+          try {
+            await axiosInstance.post("/rentals", {
+              carId,
+              startDate: dates.start.toISOString(),
+              endDate: dates.end.toISOString(),
+            });
+            // refresh list
+            const url = category
+              ? `/cars/category/${category}`
+              : "/cars/available";
+            const { data } = await axiosInstance.get(url);
+            setCars(data);
+            alert("Car rented successfully!");
+          } catch (err) {
+            alert(err.response?.data?.message || "Rental failed");
+          } finally {
+            setSelectedCar(null);
+          }
+        }}
       />
     </Box>
   );

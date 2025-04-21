@@ -242,3 +242,17 @@ export const toggleFeatured = async (req, res) => {
     res.status(500).json({ message: "Error toggling featured" });
   }
 };
+export const getCarsByCategory = async (req, res) => {
+  try {
+    const { category } = req.params;
+    const cars = await Car.find({
+      category: new RegExp(`^${category}$`, "i"),
+      isAvailable: true,
+      status: "active",
+    });
+    res.json(cars);
+  } catch (err) {
+    console.error("Error fetching cars by category:", err);
+    res.status(500).json({ message: err.message });
+  }
+};

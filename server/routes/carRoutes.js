@@ -10,6 +10,7 @@ import {
   getFeaturedCars,
   getPopularCars,
   getCarCategories,
+  getCarsByCategory,
 } from "../controllers/carController.js";
 import { protect, authorize } from "../middleware/authMiddleware.js";
 import { uploadCarFiles } from "../middleware/uploadMiddleware.js";
@@ -24,6 +25,7 @@ router.get("/available", getAvailableCars);
 router.get("/featured", getFeaturedCars);
 router.get("/popular", getPopularCars);
 router.get("/categories", getCarCategories);
+router.get("/category/:category", getCarsByCategory);
 router.get("/:id", getCarById);
 
 // Protected routes (only managers and admins can add, update, or remove cars)
