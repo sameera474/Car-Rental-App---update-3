@@ -1,8 +1,27 @@
+// File: client/src/layouts/MainLayout.jsx
 import React from "react";
-import { Container } from "@mui/material";
+import { Box, Container, Toolbar } from "@mui/material";
+import Footer from "../components/Footer";
 
 const MainLayout = ({ children }) => {
-  return <Container sx={{ minHeight: "80vh", mt: 4 }}>{children}</Container>;
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        minHeight: "100vh",
+      }}
+    >
+      {/* this Toolbar component has the exact height of your AppBar */}
+      <Toolbar />
+
+      <Container component="main" sx={{ flexGrow: 1, py: 4 }}>
+        {children}
+      </Container>
+
+      <Footer />
+    </Box>
+  );
 };
 
 export default MainLayout;
