@@ -95,7 +95,7 @@ const Home = () => {
           Rent a Car Anytime, Anywhere!
         </Typography>
         <Typography variant="h6" gutterBottom>
-          Explore our collection of premium and budget-friendly cars.
+          Explore our collection of premium and budget friendly cars.
         </Typography>
         <Box sx={{ mt: 3 }}>
           <Button
