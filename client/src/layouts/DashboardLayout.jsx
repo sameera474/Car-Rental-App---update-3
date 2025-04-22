@@ -1,5 +1,5 @@
 import React from "react";
-import Navbar from "../components/Navbar";
+import NavBar from "../components/NavBar";
 import Footer from "../components/Footer";
 import {
   Container,
@@ -17,7 +17,7 @@ const DashboardLayout = ({ children }) => {
 
   return (
     <>
-      <Navbar />
+      <NavBar />
       <Container
         sx={{ display: "flex", minHeight: "80vh", paddingTop: "20px" }}
       >
