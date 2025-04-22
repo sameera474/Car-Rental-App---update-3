@@ -7,7 +7,9 @@ import { fileURLToPath } from "url";
 // Set up __dirname for ES Modules.
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Add new car with file upload support for main image and gallery images.
+// ────────────────────────────────────────────────────────
+// 1) Create / Update
+// ────────────────────────────────────────────────────────
 export const addCar = async (req, res) => {
   try {
     const { body } = req;
@@ -106,30 +108,55 @@ export const updateCar = async (req, res) => {
   }
 };
 
+// ────────────────────────────────────────────────────────
+// 2) List all cars (for search & manager view)
+//    Supports optional ?loc= or ?location= filtering.
+// ────────────────────────────────────────────────────────
 export const getAllCars = async (req, res) => {
   try {
-    const cars = await Car.find().sort({ createdAt: -1 });
+    const { loc, location } = req.query;
+    const filter = {}; // manager wants *all* cars; customers can filter
+
+    // if customer provided a branch filter, apply it
+    if (loc) filter.location = loc;
+    else if (location) filter.location = location;
+
+    // always sort newest first
+    const cars = await Car.find(filter).sort({ createdAt: -1 });
     res.json(cars);
   } catch (error) {
+    console.error("Error fetching cars:", error);
     res
       .status(500)
       .json({ message: "Error fetching cars", error: error.message });
   }
 };
 
+// ────────────────────────────────────────────────────────
+// 3) List available cars
+//    Supports optional ?loc= or ?location= filtering.
+// ────────────────────────────────────────────────────────
 export const getAvailableCars = async (req, res) => {
   try {
-    const cars = await Car.find({ isAvailable: true, status: "active" }).sort({
-      createdAt: -1,
-    });
+    const { loc, location } = req.query;
+    const filter = { isAvailable: true, status: "active" };
+
+    if (loc) filter.location = loc;
+    else if (location) filter.location = location;
+
+    const cars = await Car.find(filter).sort({ createdAt: -1 });
     res.json(cars);
   } catch (error) {
+    console.error("Error fetching available cars:", error);
     res
       .status(500)
       .json({ message: "Error fetching available cars", error: error.message });
   }
 };
 
+// ────────────────────────────────────────────────────────
+// 4) Single car details
+// ────────────────────────────────────────────────────────
 export const getCarById = async (req, res) => {
   try {
     const car = await Car.findById(req.params.id);
@@ -142,6 +169,9 @@ export const getCarById = async (req, res) => {
   }
 };
 
+// ────────────────────────────────────────────────────────
+// 5) Soft‐remove a car
+// ────────────────────────────────────────────────────────
 export const removeCar = async (req, res) => {
   try {
     const car = await Car.findByIdAndUpdate(
@@ -158,9 +188,11 @@ export const removeCar = async (req, res) => {
   }
 };
 
+// ────────────────────────────────────────────────────────
+// 6) Featured & popular & categories (unchanged)
+// ────────────────────────────────────────────────────────
 export const getFeaturedCars = async (req, res) => {
   try {
-    // Find cars where the featured flag is set to true.
     const featuredCars = await Car.find({ featured: true });
     res.json(featuredCars);
   } catch (error) {
@@ -171,7 +203,6 @@ export const getFeaturedCars = async (req, res) => {
 
 export const getPopularCars = async (req, res) => {
   try {
-    // Example: sort by creation date descending and limit the results.
     const popularCars = await Car.find().sort({ createdAt: -1 }).limit(10);
     res.json(popularCars);
   } catch (error) {
@@ -182,7 +213,6 @@ export const getPopularCars = async (req, res) => {
 
 export const getCarCategories = async (req, res) => {
   try {
-    // Return a static list of categories.
     const categories = ["Economy", "SUV", "Luxury", "Convertible", "Van"];
     res.json(categories);
   } catch (error) {
@@ -191,6 +221,9 @@ export const getCarCategories = async (req, res) => {
   }
 };
 
+// ────────────────────────────────────────────────────────
+// 7) Permanent delete
+// ────────────────────────────────────────────────────────
 export const deleteCar = async (req, res) => {
   try {
     const car = await Car.findById(req.params.id);
@@ -198,7 +231,7 @@ export const deleteCar = async (req, res) => {
       return res.status(404).json({ message: "Car not found" });
     }
 
-    // OPTIONAL: delete the main image file from disk
+    // OPTIONAL: delete files on disk
     if (car.image && car.image.includes("/uploads/")) {
       const filePath = path.join(
         __dirname,
@@ -209,8 +242,6 @@ export const deleteCar = async (req, res) => {
         if (err) console.warn("Failed to delete image file:", err);
       });
     }
-
-    // OPTIONAL: delete gallery images
     if (Array.isArray(car.gallery)) {
       car.gallery.forEach((url) => {
         if (url.includes("/uploads/")) {
@@ -229,11 +260,14 @@ export const deleteCar = async (req, res) => {
     res.status(500).json({ message: "Error deleting car" });
   }
 };
+
+// ────────────────────────────────────────────────────────
+// 8) Toggle featured flag
+// ────────────────────────────────────────────────────────
 export const toggleFeatured = async (req, res) => {
   try {
     const car = await Car.findById(req.params.id);
     if (!car) return res.status(404).json({ message: "Car not found" });
-    // Expect body.featured to be a boolean
     car.featured = Boolean(req.body.featured);
     await car.save();
     res.json(car);
@@ -242,14 +276,25 @@ export const toggleFeatured = async (req, res) => {
     res.status(500).json({ message: "Error toggling featured" });
   }
 };
+
+// ────────────────────────────────────────────────────────
+// 9) Get by category with optional loc filter
+// ────────────────────────────────────────────────────────
 export const getCarsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
-    const cars = await Car.find({
+    const { loc, location } = req.query;
+
+    const filter = {
       category: new RegExp(`^${category}$`, "i"),
       isAvailable: true,
       status: "active",
-    });
+    };
+
+    if (loc) filter.location = loc;
+    else if (location) filter.location = location;
+
+    const cars = await Car.find(filter).sort({ createdAt: -1 });
     res.json(cars);
   } catch (err) {
     console.error("Error fetching cars by category:", err);
