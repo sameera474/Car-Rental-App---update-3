@@ -24,7 +24,7 @@ connectDB();
 // 2) CORS: allow frontend origins *and* PATCH
 const FRONTEND = [
   "http://localhost:5173",
-  "https://car-rental-app-bice-seven.vercel.app",
+  "https://car-rental-app-update-31.vercel.app",
 ];
 
 app.use(
