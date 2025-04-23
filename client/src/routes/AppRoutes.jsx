@@ -2,7 +2,7 @@
 
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/Navbar";
 import MainLayout from "../layouts/MainLayout";
 
 // Public Pages

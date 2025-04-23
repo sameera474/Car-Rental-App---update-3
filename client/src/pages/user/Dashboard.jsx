@@ -1,4 +1,3 @@
-// File: client/src/pages/user/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -8,11 +7,23 @@ import {
   Grid,
   CircularProgress,
   Alert,
+  Avatar,
+  Rating,
 } from "@mui/material";
 import axiosInstance from "../../services/axiosInstance";
 import { useAuth } from "../../context/AuthContext";
 import MyReviews from "./MyReviews";
 import MyRentals from "./MyRentals";
+
+// Avatar helper function to build proper avatar URLs
+const getAvatarUrl = (avatar, userId) => {
+  if (avatar) {
+    return avatar.startsWith("http")
+      ? avatar
+      : `${process.env.REACT_APP_API_URL}/uploads/avatars/${avatar}`;
+  }
+  return `https://i.pravatar.cc/80?u=${userId || "guest"}`;
+};
 
 const UserDashboard = () => {
   const { user } = useAuth();
@@ -28,20 +39,13 @@ const UserDashboard = () => {
     const fetchRentalSummary = async () => {
       try {
         const { data } = await axiosInstance.get(`/rentals/user/${user.id}`);
-        console.log("Fetched rentals for user:", data); // Debug: log fetched data
-
-        // Filter rentals by status.
-        const activeRentals = data.filter((r) => r.status === "active");
-        const pastRentals = data.filter((r) => r.status === "completed");
-        const totalSpent = pastRentals.reduce(
-          (sum, r) => sum + (r.totalCost || 0),
-          0
-        );
-
+        const active = data.filter((r) => r.status === "active");
+        const past = data.filter((r) => r.status === "completed");
+        const spent = past.reduce((sum, r) => sum + (r.totalCost || 0), 0);
         setRentalSummary({
-          activeRentals: activeRentals.length,
-          pastRentals: pastRentals.length,
-          totalSpent,
+          activeRentals: active.length,
+          pastRentals: past.length,
+          totalSpent: spent,
         });
       } catch (err) {
         console.error("Error fetching rental summary:", err);
@@ -51,86 +55,86 @@ const UserDashboard = () => {
       }
     };
 
-    if (user?.id) {
-      fetchRentalSummary();
-    }
+    if (user?.id) fetchRentalSummary();
   }, [user]);
 
-  if (loading) {
+  if (loading)
     return (
       <Container maxWidth="lg">
-        <Box
-          sx={{
-            p: { xs: 2, md: 3 },
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
+        <Box sx={{ p: 3, display: "flex", justifyContent: "center" }}>
           <CircularProgress />
         </Box>
       </Container>
     );
-  }
-  if (error) {
+
+  if (error)
     return (
       <Container maxWidth="lg">
-        <Box sx={{ p: { xs: 2, md: 3 } }}>
+        <Box sx={{ p: 3 }}>
           <Alert severity="error">{error}</Alert>
         </Box>
       </Container>
     );
-  }
 
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ p: { xs: 2, md: 3 } }}>
-        <Typography variant="h4" gutterBottom>
-          Welcome, {user?.name || user?.email}!
-        </Typography>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={12} md={4}>
-            <Paper sx={{ p: 2, textAlign: "center" }}>
-              <Typography variant="h6" gutterBottom>
-                Rental Summary
-              </Typography>
-              <Typography variant="body1">
-                Active Rentals: {rentalSummary.activeRentals}
-              </Typography>
-              <Typography variant="body1">
-                Past Rentals: {rentalSummary.pastRentals}
-              </Typography>
-              <Typography variant="body1">
-                Total Spent: ${rentalSummary.totalSpent.toFixed(2)}
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} sm={12} md={4}>
-            <Paper sx={{ p: 2, textAlign: "center" }}>
-              <Typography variant="h6" gutterBottom>
-                Account Summary
-              </Typography>
-              <Typography variant="body1">Name: {user.name}</Typography>
-              <Typography variant="body1">Email: {user.email}</Typography>
-              <Typography variant="body1">
-                Phone: {user.phone || "Not set"}
-              </Typography>
-            </Paper>
-          </Grid>
-          <Grid item xs={12} sm={12} md={4}>
-            <Paper sx={{ p: 2 }}>
-              <Typography variant="h6" gutterBottom align="center">
-                My Reviews
-              </Typography>
-              <MyReviews userId={user.id} />
-            </Paper>
-          </Grid>
-        </Grid>
-        <Box sx={{ mt: 4 }}>
-          <Typography variant="h5" gutterBottom>
-            My Rental History
+    <Container maxWidth="lg" sx={{ py: 3 }}>
+      <Box sx={{ display: "flex", alignItems: "center", mb: 4 }}>
+        <Avatar
+          src={getAvatarUrl(user.avatar, user.id)}
+          sx={{ width: 80, height: 80, mr: 2 }}
+        />
+        <Box>
+          <Typography variant="h4">
+            Welcome, {user.name || user.email}!
           </Typography>
-          <MyRentals />
+          {user.role === "user" && (
+            <Rating value={user.rating || 0} precision={0.5} readOnly />
+          )}
         </Box>
+      </Box>
+
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 2, textAlign: "center" }}>
+            <Typography variant="h6" gutterBottom>
+              Rental Summary
+            </Typography>
+            <Typography>
+              Active Rentals: {rentalSummary.activeRentals}
+            </Typography>
+            <Typography>Past Rentals: {rentalSummary.pastRentals}</Typography>
+            <Typography>
+              Total Spent: ${rentalSummary.totalSpent.toFixed(2)}
+            </Typography>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 2, textAlign: "center" }}>
+            <Typography variant="h6" gutterBottom>
+              Account Details
+            </Typography>
+            <Typography>Name: {user.name}</Typography>
+            <Typography>Email: {user.email}</Typography>
+            <Typography>Phone: {user.phone || "Not set"}</Typography>
+          </Paper>
+        </Grid>
+
+        <Grid item xs={12} md={4}>
+          <Paper sx={{ p: 2 }}>
+            <Typography variant="h6" gutterBottom align="center">
+              My Reviews
+            </Typography>
+            <MyReviews userId={user.id} />
+          </Paper>
+        </Grid>
+      </Grid>
+
+      <Box sx={{ mt: 5 }}>
+        <Typography variant="h5" gutterBottom>
+          My Rental History
+        </Typography>
+        <MyRentals />
       </Box>
     </Container>
   );
