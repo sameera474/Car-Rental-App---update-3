@@ -242,9 +242,6 @@ const NavBar = () => {
             {/* Right: Nav links + toggle + auth */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               {renderDesktopLinks()}
-              <IconButton onClick={toggleTheme} color="inherit">
-                {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
-              </IconButton>
 
               {user ? (
                 <>
@@ -279,6 +276,9 @@ const NavBar = () => {
                   </Button>
                 </>
               )}
+              <IconButton onClick={toggleTheme} color="inherit">
+                {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
+              </IconButton>
             </Box>
           </Box>
         </Toolbar>
