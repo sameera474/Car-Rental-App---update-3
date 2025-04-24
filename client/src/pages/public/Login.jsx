@@ -38,7 +38,8 @@ const Login = () => {
           email: response.email,
           role: response.role,
         },
-        response.token
+        response.token,
+        () => navigate(targetPaths[response.role] || "/") // Redirect after login
       );
 
       // Navigate based on role

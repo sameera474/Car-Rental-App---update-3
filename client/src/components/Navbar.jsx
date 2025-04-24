@@ -81,6 +81,11 @@ const NavBar = () => {
       ];
     }
   }
+  const getAvatarUrl = (avatar, id) => {
+    if (!avatar) return `https://i.pravatar.cc/100?u=${id}`;
+    if (avatar.startsWith("http")) return avatar;
+    return `${import.meta.env.VITE_API_URL}/uploads/avatars/${avatar}`;
+  };
 
   const renderDesktopLinks = () => (
     <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
@@ -268,7 +273,10 @@ const NavBar = () => {
                     onClick={(e) => setAnchorEl(e.currentTarget)}
                     color="inherit"
                   >
-                    <Avatar alt={user.name} src={user.avatar} />
+                    <Avatar
+                      alt={user.name}
+                      src={getAvatarUrl(user.avatar, user.id)}
+                    />
                   </IconButton>
                   <Menu
                     anchorEl={anchorEl}

@@ -1,7 +1,5 @@
-// File: client/src/context/AuthContext.jsx
 import React, { createContext, useContext, useState, useEffect } from "react";
 import jwtDecode from "jwt-decode";
-
 import { getToken, removeToken, setToken } from "../utils/token";
 import axiosInstance from "../services/axiosInstance";
 
@@ -21,34 +19,24 @@ export const AuthProvider = ({ children }) => {
     try {
       const decoded = jwtDecode(token);
 
-      // Set immediate user state from token
-      const initialUser = {
-        id: decoded.id,
-        name: decoded.name,
-        email: decoded.email,
-        role: decoded.role,
-      };
-      setUser(initialUser);
-
-      // Verify token expiration
+      // Token expiration check
       if (Date.now() >= decoded.exp * 1000) {
         throw new Error("Token expired");
       }
 
-      // Silent refresh of user data
-      const response = await axiosInstance.get(`/users/${decoded.id}`);
+      // Silent fetch full user profile
+      const { data } = await axiosInstance.get(`/users/${decoded.id}`);
       setUser({
-        id: response.data._id,
-        name: response.data.name,
-        email: response.data.email,
-        role: response.data.role,
+        id: data._id,
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        avatar: data.avatar || null,
       });
     } catch (error) {
       console.error("Auth error:", error);
-      if (error.response?.status === 401 || error.message === "Token expired") {
-        removeToken();
-        setUser(null);
-      }
+      removeToken();
+      setUser(null);
     } finally {
       setLoading(false);
     }
@@ -58,20 +46,33 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
   }, []);
 
-  const login = (userData, token) => {
+  // login with token and redirect callback
+  const login = async (userData, token, redirectCallback) => {
     setToken(token);
     const decoded = jwtDecode(token);
-    setUser({
-      id: decoded.id,
-      name: decoded.name,
-      email: decoded.email,
-      role: decoded.role,
-    });
+
+    try {
+      const { data } = await axiosInstance.get(`/users/${decoded.id}`);
+      setUser({
+        id: data._id,
+        name: data.name,
+        email: data.email,
+        role: data.role,
+        avatar: data.avatar || null,
+      });
+
+      if (redirectCallback) redirectCallback();
+    } catch (error) {
+      console.error("Login fetch error:", error);
+      setUser(null);
+    }
   };
 
-  const logout = () => {
-    setUser(null);
+  // logout and optional redirect
+  const logout = (redirectCallback) => {
     removeToken();
+    setUser(null);
+    if (redirectCallback) redirectCallback();
   };
 
   return (
