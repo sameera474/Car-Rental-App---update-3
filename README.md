@@ -6,7 +6,7 @@ A full-stack Car Rental application with role-based access built with React (Vit
 
 ## 📺 Live Demo
 
-- **Frontend**: https://car-rental-app-update-31-6bb4er1ay-sameeras-projects-7a5677db.vercel.app  
+- **Frontend**: https://car-rental-app-update-31.vercel.app/
 - **Backend API**: https://car-rental-api-ma2y.onrender.com/api  
 
 📽️ [Video Walkthrough](https://youtu.be/my-demo-video)  
