@@ -85,8 +85,9 @@ const Home = () => {
 
   return (
     <Container maxWidth="lg">
-      <Box sx={{ my: 5 }}>
-        <SearchPod />
+      {/* Responsive SearchPod wrapper */}
+      <Box sx={{ my: 5, px: { xs: 2, sm: 4, md: 0 } }}>
+        <SearchPod sx={{ width: "100%" }} />
       </Box>
 
       {/* Hero Section */}
