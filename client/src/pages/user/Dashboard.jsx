@@ -16,13 +16,6 @@ import { useAuth } from "../../context/AuthContext";
 import MyReviews from "./MyReviews";
 import MyRentals from "./MyRentals";
 
-// Helper: Return full Cloudinary URL or fallback avatar
-const getAvatarUrl = (avatar, userId) => {
-  if (avatar?.startsWith("http")) return avatar;
-  if (!avatar) return `https://i.pravatar.cc/100?u=${userId || "guest"}`;
-  return avatar;
-};
-
 const UserDashboard = () => {
   const { user } = useAuth();
   const [rentalSummary, setRentalSummary] = useState({
@@ -30,8 +23,36 @@ const UserDashboard = () => {
     pastRentals: 0,
     totalSpent: 0,
   });
+  const [reviews, setReviews] = useState([]);
+  const [averageRating, setAverageRating] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [userData, setUserData] = useState(user);
+
+  // Helper: Get proper avatar URL
+  const getAvatarUrl = (avatar, userId) => {
+    if (!avatar) return `https://i.pravatar.cc/100?u=${userId || "guest"}`;
+
+    // Already a full Cloudinary or external image
+    if (avatar.startsWith("http")) return avatar;
+
+    // From local upload (backend returns filename only)
+    return `${import.meta.env.VITE_API_URL}/uploads/avatars/${avatar}`;
+  };
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const { data } = await axiosInstance.get("/users/profile");
+        if (data) {
+          setUserData(data); // ✅ Use this locally instead of just `user`
+        }
+      } catch (err) {
+        console.error("Failed to refresh user data");
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
 
   useEffect(() => {
     const fetchRentalSummary = async () => {
@@ -53,7 +74,23 @@ const UserDashboard = () => {
       }
     };
 
-    if (user?.id) fetchRentalSummary();
+    const fetchReviews = async () => {
+      try {
+        const { data } = await axiosInstance.get(`/reviews/user/${user.id}`);
+        setReviews(data);
+        if (data.length > 0) {
+          const totalRating = data.reduce((sum, r) => sum + r.rating, 0);
+          setAverageRating(totalRating / data.length);
+        }
+      } catch (err) {
+        console.error("Error fetching user reviews:", err);
+      }
+    };
+
+    if (user?.id) {
+      fetchRentalSummary();
+      fetchReviews();
+    }
   }, [user]);
 
   if (loading)
@@ -79,15 +116,15 @@ const UserDashboard = () => {
       <Paper elevation={3} sx={{ p: 3, mb: 4 }}>
         <Box sx={{ display: "flex", alignItems: "center", gap: 3 }}>
           <Avatar
-            src={getAvatarUrl(user.avatar, user.id)}
+            src={getAvatarUrl(userData.avatar, userData._id)}
             sx={{ width: 100, height: 100 }}
           />
           <Box>
             <Typography variant="h4" gutterBottom>
-              Welcome, {user.name || user.email}!
+              Welcome, {userData.name || userData.email}!
             </Typography>
             {user.role === "user" && (
-              <Rating value={user.rating || 0} precision={0.5} readOnly />
+              <Rating value={averageRating} precision={0.5} readOnly />
             )}
           </Box>
         </Box>
@@ -118,7 +155,7 @@ const UserDashboard = () => {
           </Paper>
         </Grid>
 
-        <Grid item xs={12} md={4}>
+        <Grid item xs={12}>
           <Paper sx={{ p: 3 }}>
             <Typography variant="h6" align="center" gutterBottom>
               My Reviews

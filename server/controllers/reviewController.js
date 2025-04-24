@@ -79,7 +79,7 @@ export const createReview = async (req, res) => {
 export const getCarReviews = async (req, res) => {
   try {
     const reviews = await Review.find({ car: req.params.carId })
-      .populate("user", "name email")
+      .populate("user", "name email avatar")
       .sort({ createdAt: -1 });
     res.json(reviews);
   } catch (error) {
@@ -94,7 +94,7 @@ export const getUserReviews = async (req, res) => {
   try {
     const reviews = await Review.find({ user: req.params.userId })
       .populate("car", "brand model")
-      .populate("user", "name email")
+      .populate("user", "name email avatar") // 👈 This line updated
       .sort({ createdAt: -1 });
     res.json(reviews);
   } catch (error) {
@@ -104,6 +104,7 @@ export const getUserReviews = async (req, res) => {
       .json({ message: error.message || "Error fetching reviews" });
   }
 };
+
 export const getRecentReviews = async (req, res) => {
   try {
     const recentReviews = await Review.find({})
