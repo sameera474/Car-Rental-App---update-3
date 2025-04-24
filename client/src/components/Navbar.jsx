@@ -22,6 +22,8 @@ import { useAuth } from "../context/AuthContext";
 import { useCustomTheme } from "../context/ThemeContext";
 import DarkModeIcon from "@mui/icons-material/Brightness4";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import logoDark from "../assets/logo-dark.png";
+import logoLight from "../assets/logo-light.png";
 
 const NavBar = () => {
   const { user, logout } = useAuth();
@@ -32,11 +34,9 @@ const NavBar = () => {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const profilePath = user?.role ? `/${user.role}/profile` : "/profile";
+  const logo = isDarkMode ? logoLight : logoDark;
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
+  const handleDrawerToggle = () => setMobileOpen(!mobileOpen);
   const handleLogout = () => {
     logout();
     setMobileOpen(false);
@@ -104,8 +104,7 @@ const NavBar = () => {
   );
 
   const renderDrawerLinks = () => (
-    <Box sx={{ width: 250, px: 2, pt: 1 }}>
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}></Box>
+    <Box sx={{ width: 250, px: 2, pt: 2 }}>
       <List>
         {commonLinks.map((link) => (
           <ListItem
@@ -197,7 +196,7 @@ const NavBar = () => {
             width: "100%",
           }}
         >
-          {/* Left section: Sandwich menu */}
+          {/* Mobile: Left [menu] center [brand] right [toggle] */}
           <Box
             sx={{
               display: { xs: "flex", md: "none" },
@@ -212,20 +211,34 @@ const NavBar = () => {
             >
               <MenuIcon />
             </IconButton>
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{ flexGrow: 1, textAlign: "center" }}
+            <Link
+              to="/"
+              style={{ textDecoration: "none", color: "inherit", flexGrow: 1 }}
             >
-              Car Rental App
-            </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
+                  justifyContent: "center",
+                }}
+              >
+                <img
+                  src={logo}
+                  alt="Logo"
+                  style={{ width: "48px", height: "48px" }}
+                />
+                <Typography variant="h6" noWrap>
+                  SAM Car Rentals
+                </Typography>
+              </Box>
+            </Link>
             <IconButton onClick={toggleTheme} color="inherit">
               {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
           </Box>
 
-          {/* Desktop: Brand + Right-aligned links and controls */}
+          {/* Desktop layout: Brand left, nav + user + toggle right */}
           <Box
             sx={{
               display: { xs: "none", md: "flex" },
@@ -234,15 +247,21 @@ const NavBar = () => {
               width: "100%",
             }}
           >
-            {/* Brand name on the left */}
-            <Typography variant="h6" noWrap component="div" sx={{ px: 2 }}>
-              Car Rental App
-            </Typography>
+            <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <img
+                  src={logo}
+                  alt="Logo"
+                  style={{ width: "48px", height: "48px" }}
+                />
+                <Typography variant="h6" noWrap component="div">
+                  SAM Car Rentals
+                </Typography>
+              </Box>
+            </Link>
 
-            {/* Right: Nav links + toggle + auth */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
               {renderDesktopLinks()}
-
               {user ? (
                 <>
                   <IconButton
@@ -283,6 +302,7 @@ const NavBar = () => {
           </Box>
         </Toolbar>
       </AppBar>
+
       <Drawer
         anchor="left"
         open={mobileOpen}

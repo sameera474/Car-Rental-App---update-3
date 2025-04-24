@@ -19,11 +19,20 @@ export const CustomThemeProvider = ({ children }) => {
       palette: {
         mode: isDarkMode ? "dark" : "light",
         primary: {
-          main: isDarkMode ? "#9e9e9e" : "#90caf9",
+          main: isDarkMode ? "#9e9e9e" : "#F7B416",
         },
         background: {
           default: isDarkMode ? "#121212" : "#f5f5f5",
           paper: isDarkMode ? "#1d1d1d" : "#ffffff",
+        },
+        text: {
+          primary: isDarkMode ? "#ffffff" : "#000000",
+          secondary: isDarkMode ? "#cccccc" : "#333333",
+        },
+      },
+      typography: {
+        allVariants: {
+          color: isDarkMode ? "#ffffff" : "#000000",
         },
       },
     });
