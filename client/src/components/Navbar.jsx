@@ -14,19 +14,24 @@ import {
   Menu,
   MenuItem,
   Avatar,
+  useTheme,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useCustomTheme } from "../context/ThemeContext";
+import DarkModeIcon from "@mui/icons-material/Brightness4";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
 const NavBar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const { isDarkMode, toggleTheme } = useCustomTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
 
-  // Compute the profile path based on user role.
-  const profilePath = user && user.role ? `/${user.role}/profile` : "/profile";
+  const profilePath = user?.role ? `/${user.role}/profile` : "/profile";
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -39,19 +44,15 @@ const NavBar = () => {
     navigate("/");
   };
 
-  // General links available to all visitors.
   const commonLinks = [
     { path: "/", text: "Home" },
     { path: "/about", text: "About Us" },
     { path: "/contact", text: "Contact Us" },
   ];
 
-  // Authenticated user links (role-specific).
   let authLinks = [];
   if (user) {
     const prefix = `/${user.role}`;
-    // You can adjust these links as needed for each role.
-    // For example, you may wish to have different links for 'user', 'manager', etc.
     if (user.role === "user") {
       authLinks = [
         { path: `${prefix}/dashboard`, text: "Dashboard" },
@@ -81,7 +82,6 @@ const NavBar = () => {
     }
   }
 
-  // Desktop links: visible on md and up.
   const renderDesktopLinks = () => (
     <Box sx={{ display: { xs: "none", md: "flex" }, alignItems: "center" }}>
       {commonLinks.map((link) => (
@@ -100,51 +100,12 @@ const NavBar = () => {
             {link.text}
           </Button>
         ))}
-      {user ? (
-        <>
-          <IconButton
-            onClick={(e) => setAnchorEl(e.currentTarget)}
-            color="inherit"
-          >
-            {user.avatar ? (
-              <Avatar alt={user.name} src={user.avatar} />
-            ) : (
-              <Avatar sx={{ bgcolor: "secondary.main" }}>
-                {user.name ? user.name.charAt(0).toUpperCase() : "U"}
-              </Avatar>
-            )}
-          </IconButton>
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={() => setAnchorEl(null)}
-          >
-            <MenuItem
-              component={Link}
-              to={profilePath}
-              onClick={() => setAnchorEl(null)}
-            >
-              My Profile
-            </MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
-          </Menu>
-        </>
-      ) : (
-        <>
-          <Button color="inherit" component={Link} to="/login">
-            Login
-          </Button>
-          <Button color="inherit" component={Link} to="/register">
-            Register
-          </Button>
-        </>
-      )}
     </Box>
   );
 
-  // Mobile Drawer: visible on xs screens.
   const renderDrawerLinks = () => (
-    <Box sx={{ width: 250 }}>
+    <Box sx={{ width: 250, px: 2, pt: 1 }}>
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}></Box>
       <List>
         {commonLinks.map((link) => (
           <ListItem
@@ -154,7 +115,10 @@ const NavBar = () => {
             to={link.path}
             onClick={handleDrawerToggle}
           >
-            <ListItemText primary={link.text} />
+            <ListItemText
+              primary={link.text}
+              primaryTypographyProps={{ color: theme.palette.text.primary }}
+            />
           </ListItem>
         ))}
         {user && (
@@ -167,7 +131,10 @@ const NavBar = () => {
                 to={link.path}
                 onClick={handleDrawerToggle}
               >
-                <ListItemText primary={link.text} />
+                <ListItemText
+                  primary={link.text}
+                  primaryTypographyProps={{ color: theme.palette.text.primary }}
+                />
               </ListItem>
             ))}
             <ListItem
@@ -176,10 +143,16 @@ const NavBar = () => {
               to={profilePath}
               onClick={handleDrawerToggle}
             >
-              <ListItemText primary="My Profile" />
+              <ListItemText
+                primary="My Profile"
+                primaryTypographyProps={{ color: theme.palette.text.primary }}
+              />
             </ListItem>
             <ListItem button onClick={handleLogout}>
-              <ListItemText primary="Logout" />
+              <ListItemText
+                primary="Logout"
+                primaryTypographyProps={{ color: theme.palette.text.primary }}
+              />
             </ListItem>
           </>
         )}
@@ -191,7 +164,10 @@ const NavBar = () => {
               to="/login"
               onClick={handleDrawerToggle}
             >
-              <ListItemText primary="Login" />
+              <ListItemText
+                primary="Login"
+                primaryTypographyProps={{ color: theme.palette.text.primary }}
+              />
             </ListItem>
             <ListItem
               button
@@ -199,7 +175,10 @@ const NavBar = () => {
               to="/register"
               onClick={handleDrawerToggle}
             >
-              <ListItemText primary="Register" />
+              <ListItemText
+                primary="Register"
+                primaryTypographyProps={{ color: theme.palette.text.primary }}
+              />
             </ListItem>
           </>
         )}
@@ -209,28 +188,110 @@ const NavBar = () => {
 
   return (
     <>
-      <AppBar position="fixed">
-        <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            onClick={handleDrawerToggle}
-            sx={{ display: { xs: "block", md: "none" } }}
+      <AppBar position="fixed" color="primary">
+        <Toolbar
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          {/* Left section: Sandwich menu */}
+          <Box
+            sx={{
+              display: { xs: "flex", md: "none" },
+              alignItems: "center",
+              flexGrow: 1,
+            }}
           >
-            <MenuIcon />
-          </IconButton>
-          <Typography variant="h6" sx={{ flexGrow: 1 }}>
-            Car Rental App
-          </Typography>
-          {renderDesktopLinks()}
+            <IconButton
+              edge="start"
+              color="inherit"
+              onClick={handleDrawerToggle}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography
+              variant="h6"
+              noWrap
+              component="div"
+              sx={{ flexGrow: 1, textAlign: "center" }}
+            >
+              Car Rental App
+            </Typography>
+            <IconButton onClick={toggleTheme} color="inherit">
+              {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
+            </IconButton>
+          </Box>
+
+          {/* Desktop: Brand + Right-aligned links and controls */}
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              alignItems: "center",
+              justifyContent: "space-between",
+              width: "100%",
+            }}
+          >
+            {/* Brand name on the left */}
+            <Typography variant="h6" noWrap component="div" sx={{ px: 2 }}>
+              Car Rental App
+            </Typography>
+
+            {/* Right: Nav links + toggle + auth */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+              {renderDesktopLinks()}
+              <IconButton onClick={toggleTheme} color="inherit">
+                {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
+              </IconButton>
+
+              {user ? (
+                <>
+                  <IconButton
+                    onClick={(e) => setAnchorEl(e.currentTarget)}
+                    color="inherit"
+                  >
+                    <Avatar alt={user.name} src={user.avatar} />
+                  </IconButton>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={Boolean(anchorEl)}
+                    onClose={() => setAnchorEl(null)}
+                  >
+                    <MenuItem
+                      component={Link}
+                      to={profilePath}
+                      onClick={() => setAnchorEl(null)}
+                    >
+                      My Profile
+                    </MenuItem>
+                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                  </Menu>
+                </>
+              ) : (
+                <>
+                  <Button color="inherit" component={Link} to="/login">
+                    Login
+                  </Button>
+                  <Button color="inherit" component={Link} to="/register">
+                    Register
+                  </Button>
+                </>
+              )}
+            </Box>
+          </Box>
         </Toolbar>
       </AppBar>
       <Drawer
         anchor="left"
         open={mobileOpen}
         onClose={handleDrawerToggle}
-        ModalProps={{
-          keepMounted: true, // Improves performance on mobile.
+        ModalProps={{ keepMounted: true }}
+        PaperProps={{
+          sx: {
+            backgroundColor: theme.palette.background.default,
+          },
         }}
       >
         {renderDrawerLinks()}

@@ -1,13 +1,16 @@
-// File: client/src/App.jsx
+// client/src/App.jsx
 import React from "react";
 import { AuthProvider } from "./context/AuthContext";
 import AppRoutes from "./routes/AppRoutes";
+import { CustomThemeProvider } from "./context/ThemeContext";
 
 function App() {
   return (
-    <AuthProvider>
-      <AppRoutes />
-    </AuthProvider>
+    <CustomThemeProvider>
+      <AuthProvider>
+        <AppRoutes />
+      </AuthProvider>
+    </CustomThemeProvider>
   );
 }
 
