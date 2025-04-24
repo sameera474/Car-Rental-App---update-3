@@ -9,15 +9,16 @@ import {
   Button,
   Avatar,
   Rating,
+  useTheme,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import axiosInstance from "../../services/axiosInstance";
 import SearchPod from "../../components/SearchPod";
-
-// react‑slick
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
+import HeroCar from "../../assets/home-hero-car.png"; // Replace with your hero image
 
 const DEFAULT_CAR_IMAGE = "https://via.placeholder.com/300x150?text=No+Image";
 
@@ -27,6 +28,7 @@ const Home = () => {
   const [categories, setCategories] = useState([]);
   const [testimonials, setTestimonials] = useState([]);
   const [error, setError] = useState("");
+  const theme = useTheme();
 
   const vehicleSliderSettings = {
     dots: true,
@@ -37,8 +39,8 @@ const Home = () => {
     autoplay: true,
     autoplaySpeed: 3000,
     responsive: [
-      { breakpoint: 960, settings: { slidesToShow: 2 } },
-      { breakpoint: 600, settings: { slidesToShow: 1 } },
+      { breakpoint: 1200, settings: { slidesToShow: 2 } },
+      { breakpoint: 768, settings: { slidesToShow: 1 } },
     ],
   };
 
@@ -53,63 +55,86 @@ const Home = () => {
     responsive: [{ breakpoint: 960, settings: { slidesToShow: 1 } }],
   };
 
-  const fetchHomeData = async () => {
-    try {
-      const [fRes, pRes, cRes, rRes] = await Promise.all([
-        axiosInstance.get("/cars/featured"),
-        axiosInstance.get("/cars/popular"),
-        axiosInstance.get("/cars/categories"),
-        axiosInstance.get("/reviews/recent"),
-      ]);
-
-      // Avoid duplicates between featured & popular
-      const popularIDs = new Set(pRes.data.map((c) => c._id));
-      const filteredFeatured = fRes.data.filter((c) => !popularIDs.has(c._id));
-
-      setFeaturedVehicles(
-        filteredFeatured.length ? filteredFeatured : fRes.data
-      );
-      setPopularVehicles(pRes.data);
-      setCategories(cRes.data);
-      setTestimonials(rRes.data);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to load home page data");
-    }
-  };
-
   useEffect(() => {
+    const fetchHomeData = async () => {
+      try {
+        const [fRes, pRes, cRes, rRes] = await Promise.all([
+          axiosInstance.get("/cars/featured"),
+          axiosInstance.get("/cars/popular"),
+          axiosInstance.get("/cars/categories"),
+          axiosInstance.get("/reviews/recent"),
+        ]);
+
+        const popularIDs = new Set(pRes.data.map((c) => c._id));
+        const filteredFeatured = fRes.data.filter(
+          (c) => !popularIDs.has(c._id)
+        );
+
+        setFeaturedVehicles(
+          filteredFeatured.length ? filteredFeatured : fRes.data
+        );
+        setPopularVehicles(pRes.data);
+        setCategories(cRes.data);
+        setTestimonials(rRes.data);
+      } catch (err) {
+        console.error(err);
+        setError("Failed to load home page data");
+      }
+    };
+
     fetchHomeData();
   }, []);
 
   return (
     <Container maxWidth="lg">
-      {/* 0) Search Pod */}
-      <Box sx={{ my: 4 }}>
+      <Box sx={{ my: 5 }}>
         <SearchPod />
       </Box>
 
-      {/* 1) Hero Section */}
-      <Box textAlign="center" sx={{ mt: 5, mb: 5 }}>
-        <Typography variant="h2" gutterBottom>
-          Rent a Car Anytime, Anywhere!
-        </Typography>
-        <Typography variant="h6" gutterBottom>
-          Explore our collection of premium and budget friendly cars.
-        </Typography>
-        <Box sx={{ mt: 3 }}>
-          <Button
-            component={Link}
-            to="/register"
-            variant="contained"
-            size="large"
-            sx={{ mr: 2 }}
+      {/* Hero Section */}
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: { xs: "column", md: "row" },
+          alignItems: "center",
+          justifyContent: "space-between",
+          my: 6,
+          gap: 4,
+        }}
+      >
+        <Box sx={{ flex: 1, textAlign: { xs: "center", md: "left" } }}>
+          <Typography variant="h3" gutterBottom>
+            Book a Car Near You and Drive in Minutes!
+          </Typography>
+          <Typography variant="body1" sx={{ mb: 3 }}>
+            Book the coolest car effortlessly, plan for thrilling rides. Join
+            the car rental revolution today.
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              gap: 2,
+              justifyContent: { xs: "center", md: "flex-start" },
+            }}
           >
-            Get Started
-          </Button>
-          <Button component={Link} to="/cars" variant="outlined" size="large">
-            Browse Cars
-          </Button>
+            <img
+              src="/images/app-store-badge.svg"
+              alt="App Store"
+              width={140}
+            />
+            <img
+              src="/images/google-play-badge.svg"
+              alt="Google Play"
+              width={140}
+            />
+          </Box>
+        </Box>
+        <Box sx={{ flex: 1, display: "flex", justifyContent: "center" }}>
+          <img
+            src={HeroCar}
+            alt="Hero Car"
+            style={{ maxWidth: "100%", height: "auto", borderRadius: 12 }}
+          />
         </Box>
       </Box>
 
@@ -119,15 +144,15 @@ const Home = () => {
         </Box>
       )}
 
-      {/* 2) Featured Vehicles */}
-      <Box sx={{ my: 4 }}>
+      {/* Featured Vehicles */}
+      <Box sx={{ my: 6 }}>
         <Typography variant="h4" gutterBottom>
           Featured Vehicles
         </Typography>
         {featuredVehicles.length ? (
           <Slider {...vehicleSliderSettings}>
             {featuredVehicles.map((car, i) => (
-              <Box key={car._id || i} sx={{ p: 1 }}>
+              <Box key={car._id || i} sx={{ px: 1 }}>
                 <Paper sx={{ p: 2, textAlign: "center" }}>
                   <img
                     src={car.image || DEFAULT_CAR_IMAGE}
@@ -150,22 +175,17 @@ const Home = () => {
         ) : (
           <Typography>No featured vehicles available</Typography>
         )}
-        <Box textAlign="center" sx={{ mt: 2 }}>
-          <Button component={Link} to="/cars/featured" variant="text">
-            See All Featured Vehicles
-          </Button>
-        </Box>
       </Box>
 
-      {/* 3) Popular Vehicles */}
-      <Box sx={{ my: 4 }}>
+      {/* Popular Vehicles */}
+      <Box sx={{ my: 6 }}>
         <Typography variant="h4" gutterBottom>
           Popular Vehicles
         </Typography>
         {popularVehicles.length ? (
           <Slider {...vehicleSliderSettings}>
             {popularVehicles.map((car, i) => (
-              <Box key={car._id || i} sx={{ p: 1 }}>
+              <Box key={car._id || i} sx={{ px: 1 }}>
                 <Paper sx={{ p: 2, textAlign: "center" }}>
                   <img
                     src={car.image || DEFAULT_CAR_IMAGE}
@@ -188,48 +208,16 @@ const Home = () => {
         ) : (
           <Typography>No popular vehicles available</Typography>
         )}
-        <Box textAlign="center" sx={{ mt: 2 }}>
-          <Button component={Link} to="/cars/popular" variant="text">
-            See All Popular Vehicles
-          </Button>
-        </Box>
       </Box>
 
-      {/* 4) Vehicle Categories */}
-      <Box sx={{ my: 4, textAlign: "center" }}>
-        <Typography variant="h4" gutterBottom>
-          Vehicle Categories
-        </Typography>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            gap: 2,
-            flexWrap: "wrap",
-          }}
-        >
-          {categories.map((cat, i) => (
-            <Button
-              key={i}
-              component={Link}
-              to={`/cars/category/${cat.toLowerCase()}`}
-              variant="outlined"
-              sx={{ textTransform: "none" }}
-            >
-              {cat}
-            </Button>
-          ))}
-        </Box>
-      </Box>
-
-      {/* 5) Testimonials */}
-      <Box sx={{ my: 4 }}>
+      {/* Testimonials */}
+      <Box sx={{ my: 6 }}>
         <Typography variant="h4" gutterBottom>
           What Our Customers Say
         </Typography>
         <Slider {...testimonialSliderSettings}>
           {testimonials.map((t, i) => (
-            <Box key={t._id || i} sx={{ p: 2 }}>
+            <Box key={t._id || i} sx={{ px: 2 }}>
               <Paper
                 sx={{
                   p: 3,
@@ -261,19 +249,14 @@ const Home = () => {
             </Box>
           ))}
         </Slider>
-        <Box textAlign="center" sx={{ mt: 2 }}>
-          <Button component={Link} to="/reviews" variant="text">
-            See All Reviews
-          </Button>
-        </Box>
       </Box>
 
-      {/* 6) Promotion */}
+      {/* Promotion */}
       <Box
         sx={{
-          my: 4,
+          my: 6,
           p: 3,
-          bgcolor: "primary.main",
+          bgcolor: theme.palette.primary.main,
           borderRadius: 2,
           textAlign: "center",
           color: "#fff",
