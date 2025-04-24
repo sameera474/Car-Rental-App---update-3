@@ -46,7 +46,7 @@ app.options("*", cors());
 app.use(express.json());
 
 // 4) Static uploads
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // 5) API routes (you can choose /api prefix if you like)
 app.use("/api/auth", authRoutes);

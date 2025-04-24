@@ -26,7 +26,7 @@ export const updateUserProfile = async (req, res) => {
       const protocol = req.protocol;
       const host = req.get("host");
       // Save a complete public URL (e.g. https://yourdomain.com/uploads/avatars/filename)
-      updates.avatar = `${protocol}://${host}/uploads/avatars/${req.file.filename}`;
+      updates.avatar = req.file?.path;
     }
 
     const user = await User.findByIdAndUpdate(req.user._id, updates, {
