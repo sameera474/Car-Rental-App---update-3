@@ -1,25 +1,16 @@
 // server/middleware/uploadAvatar.js
 import multer from "multer";
-import path from "path";
-import { fileURLToPath } from "url";
-import fs from "fs";
+import { CloudinaryStorage } from "multer-storage-cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 
-// Determine __dirname for ES modules.
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const avatarDir = path.join(__dirname, "../uploads/avatars");
-
-// Create the uploads/avatars directory if it doesn't exist.
-if (!fs.existsSync(avatarDir)) {
-  fs.mkdirSync(avatarDir, { recursive: true });
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, avatarDir);
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, `${uniqueSuffix}-${file.originalname}`);
+const avatarStorage = new CloudinaryStorage({
+  cloudinary,
+  params: {
+    folder: "CarRentalApp/avatars",
+    allowed_formats: ["jpg", "jpeg", "png"],
+    transformation: [
+      { width: 300, height: 300, crop: "thumb", gravity: "face" },
+    ],
   },
 });
 
@@ -32,9 +23,9 @@ const fileFilter = (req, file, cb) => {
 };
 
 const uploadAvatar = multer({
-  storage,
+  storage: avatarStorage,
   fileFilter,
-  limits: { fileSize: 2 * 1024 * 1024 }, // 2 MB limit per avatar
+  limits: { fileSize: 2 * 1024 * 1024 },
 }).single("avatar");
 
 export default uploadAvatar;

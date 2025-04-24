@@ -39,7 +39,7 @@ export const addCar = async (req, res) => {
       transmission: body.transmission || "Manual",
       location: body.location || "Main Branch",
       image: req.files?.image
-        ? `${protocol}://${host}/uploads/${req.files.image[0].filename}`
+        ? req.files.image[0].path // <-- Cloudinary returns full image URL
         : body.imageUrl || "",
       isAvailable: body.isAvailable !== "false",
       status: "active",
@@ -52,7 +52,7 @@ export const addCar = async (req, res) => {
       const galleryUrls = req.files.gallery.map(
         (file) => `${protocol}://${host}/uploads/${file.filename}`
       );
-      carData.gallery = galleryUrls;
+      carData.gallery = req.files?.gallery?.map((file) => file.path) || [];
     }
 
     const newCar = await Car.create(carData);

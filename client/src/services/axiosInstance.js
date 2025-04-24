@@ -9,14 +9,12 @@ const axiosInstance = axios.create({
   headers: { "Content-Type": "application/json" },
 });
 
-// attach token
 axiosInstance.interceptors.request.use((cfg) => {
   const token = getToken();
   if (token) cfg.headers.Authorization = `Bearer ${token}`;
   return cfg;
 });
 
-// handle 401
 axiosInstance.interceptors.response.use(
   (res) => res,
   (err) => {
