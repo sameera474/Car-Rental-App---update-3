@@ -25,6 +25,7 @@ connectDB();
 const FRONTEND = [
   "http://localhost:5173",
   "https://car-rental-app-update-31.vercel.app",
+  "https://car-rental-app-update-31-6bb4er1ay-sameeras-projects-7a5677db.vercel.app", // ✅ ← add this full Vercel deployment domain
 ];
 
 app.use(
