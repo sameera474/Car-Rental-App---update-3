@@ -1,4 +1,3 @@
-// File: server/models/User.js
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
@@ -38,7 +37,7 @@ const UserSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: "", // <-- New field to store profile image URL
+    default: "",
   },
   createdAt: {
     type: Date,

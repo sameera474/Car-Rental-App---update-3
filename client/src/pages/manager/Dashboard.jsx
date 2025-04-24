@@ -1,4 +1,3 @@
-// File: client/src/pages/manager/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import {
   Container,

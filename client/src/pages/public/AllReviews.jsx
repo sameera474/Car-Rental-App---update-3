@@ -1,4 +1,3 @@
-// File: client/src/pages/public/AllReviews.jsx
 import React, { useEffect, useState } from "react";
 import {
   Box,

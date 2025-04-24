@@ -1,4 +1,3 @@
-// File: client/src/context/ThemeContext.jsx
 import React, { createContext, useContext, useMemo, useState } from "react";
 import {
   createTheme,
@@ -50,5 +49,4 @@ export const CustomThemeProvider = ({ children }) => {
   );
 };
 
-// ✅ This is the missing part:
 export const useCustomTheme = () => useContext(ThemeContext);

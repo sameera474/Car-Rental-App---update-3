@@ -1,4 +1,3 @@
-// File: client/src/pages/UserDashboard.jsx
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -44,7 +43,7 @@ const UserDashboard = () => {
       try {
         const { data } = await axiosInstance.get("/users/profile");
         if (data) {
-          setUserData(data); // ✅ Use this locally instead of just `user`
+          setUserData(data);
         }
       } catch (err) {
         console.error("Failed to refresh user data");

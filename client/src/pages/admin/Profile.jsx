@@ -1,4 +1,3 @@
-// File: client/src/pages/admin/Profile.jsx
 import React, { useState, useEffect } from "react";
 import {
   Box,

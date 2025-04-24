@@ -7,7 +7,7 @@ import {
   Button,
 } from "@mui/material";
 import Cropper from "react-easy-crop";
-import getCroppedImg from "../utils/cropImage"; // We'll create this helper below
+import getCroppedImg from "../utils/cropImage";
 
 const CropperDialog = ({ imageSrc, open, onClose, onCropComplete }) => {
   const [crop, setCrop] = useState({ x: 0, y: 0 });

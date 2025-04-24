@@ -1,4 +1,3 @@
-// File: server/routes/userRoutes.js
 import express from "express";
 import {
   getUserProfile,
@@ -31,8 +30,7 @@ router.delete("/:id", protect, authorize("admin"), deleteUser);
 // Example route using the upload middleware if needed
 router.put("/profile/avatar", protect, uploadAvatar, (req, res) => {
   // Call your controller function to update the user's avatar.
-  // For example:
-  // updateUserAvatar(req, res);
+
   res.json({ message: "Avatar updated successfully" });
 });
 

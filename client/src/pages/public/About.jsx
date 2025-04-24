@@ -1,6 +1,6 @@
 import React from "react";
 import { Typography, Box, Container, Paper, Grid, Avatar } from "@mui/material";
-import MainLayout from "../../layouts/MainLayout"; // Make sure this path is correct
+import MainLayout from "../../layouts/MainLayout";
 
 const About = () => {
   return (

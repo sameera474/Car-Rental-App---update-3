@@ -1,4 +1,3 @@
-// File: client/src/pages/user/CarList.jsx
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -14,10 +13,9 @@ import {
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axiosInstance from "../../services/axiosInstance";
 import { useAuth } from "../../context/AuthContext";
-import RentalDialog from "./RentalDialog"; // Your reusable rental dialog
-
+import RentalDialog from "./RentalDialog";
 const CarList = () => {
-  const { category } = useParams(); // e.g. "economy"
+  const { category } = useParams();
   const [cars, setCars] = useState([]);
   const [selectedCar, setSelectedCar] = useState(null);
   const [loading, setLoading] = useState(true);

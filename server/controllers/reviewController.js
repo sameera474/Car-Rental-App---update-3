@@ -1,4 +1,3 @@
-// File: server/controllers/reviewController.js
 import mongoose from "mongoose";
 import Review from "../models/Review.js";
 import Car from "../models/Car.js";

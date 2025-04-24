@@ -1,4 +1,3 @@
-// File: server/routes/carRoutes.js
 import express from "express";
 import {
   addCar,

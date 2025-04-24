@@ -1,4 +1,3 @@
-// File: client/src/pages/boss/Dashboard.jsx
 import React, { useState, useEffect } from "react";
 import {
   Container,
@@ -63,10 +62,7 @@ const BossDashboard = () => {
               <Typography variant="h6" gutterBottom>
                 Recent Activity
               </Typography>
-              <Typography variant="body1">
-                {/* You can add a recent activity list here */}
-                No recent activity.
-              </Typography>
+              <Typography variant="body1">No recent activity.</Typography>
             </Paper>
           </Grid>
         </Grid>

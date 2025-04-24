@@ -1,4 +1,4 @@
-// File: client/src/layouts/MainLayout.jsx
+
 import React from "react";
 import { Box, Container, Toolbar } from "@mui/material";
 import Footer from "../components/Footer";
@@ -11,7 +11,7 @@ const MainLayout = ({ children }) => (
       minHeight: "100vh",
     }}
   >
-    {/* match your AppBar height */}
+   
     <Toolbar />
 
     <Container component="main" sx={{ flexGrow: 1, py: 4 }}>

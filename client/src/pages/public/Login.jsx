@@ -1,4 +1,3 @@
-// File: client/src/pages/public/Login.jsx
 import React, { useState } from "react";
 import { TextField, Button, Box, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";

@@ -20,7 +20,7 @@ const AddStaff = () => {
   const handleAddStaff = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem("token"); // ✅ Get Admin/Boss Token
+      const token = localStorage.getItem("token"); //  Get Admin/Boss Token
       await axios.post(
         "http://localhost:5000/api/admin/add-staff",
         { name, email, password, role },

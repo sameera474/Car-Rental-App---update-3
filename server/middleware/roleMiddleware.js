@@ -1,4 +1,3 @@
-// File: server/middleware/roleMiddleware.js
 const permit = (...allowedRoles) => {
   return (req, res, next) => {
     if (req.user && allowedRoles.includes(req.user.role)) {

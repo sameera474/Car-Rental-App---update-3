@@ -1,4 +1,3 @@
-// File: server/controllers/userController.js
 import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import { generateToken } from "../utils/authUtils.js";
@@ -25,7 +24,7 @@ export const updateUserProfile = async (req, res) => {
     if (req.file) {
       const protocol = req.protocol;
       const host = req.get("host");
-      // Save a complete public URL (e.g. https://yourdomain.com/uploads/avatars/filename)
+      // Save a complete public URL 
       updates.avatar = req.file?.path;
     }
 
@@ -42,7 +41,6 @@ export const updateUserProfile = async (req, res) => {
   }
 };
 
-// The remainder of your functions (getUserById, getAllUsers, etc.) remain unchanged.
 
 export const getUserById = async (req, res) => {
   try {

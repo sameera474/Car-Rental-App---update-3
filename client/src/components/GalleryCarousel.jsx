@@ -1,4 +1,3 @@
-// File: client/src/components/GalleryCarousel.jsx
 import React, { useState } from "react";
 import { Box, IconButton } from "@mui/material";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";

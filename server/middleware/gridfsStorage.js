@@ -14,7 +14,7 @@ export const storage = new multerGridfsStorage({
       const filename = Date.now() + "-" + file.originalname;
       const fileInfo = {
         filename: filename,
-        bucketName: "uploads", // Your GridFS bucket name
+        bucketName: "uploads",
       };
       resolve(fileInfo);
     });

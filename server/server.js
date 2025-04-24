@@ -1,4 +1,3 @@
-// server/server.js
 import express from "express";
 import cors from "cors";
 import path from "path";
@@ -25,7 +24,7 @@ connectDB();
 const FRONTEND = [
   "http://localhost:5173",
   "https://car-rental-app-update-31.vercel.app",
-  "https://car-rental-app-update-31-6bb4er1ay-sameeras-projects-7a5677db.vercel.app", // ✅ ← add this full Vercel deployment domain
+  "https://car-rental-app-update-31-6bb4er1ay-sameeras-projects-7a5677db.vercel.app",
 ];
 
 app.use(

@@ -1,4 +1,3 @@
-// File: client/src/pages/admin/Dashboard.jsx
 import React from "react";
 import { Container, Box, Typography, Paper, Grid } from "@mui/material";
 import ManageBosses from "./ManageBosses";

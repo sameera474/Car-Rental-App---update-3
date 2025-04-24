@@ -1,4 +1,3 @@
-// File: client/src/pages/user/Profile.jsx
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -11,7 +10,7 @@ import {
   Avatar,
 } from "@mui/material";
 import axiosInstance from "../../services/axiosInstance";
-import CropperDialog from "../../components/CropperDialog"; // Assume you have a cropper dialog
+import CropperDialog from "../../components/CropperDialog";
 
 const UserProfile = () => {
   const [profile, setProfile] = useState({

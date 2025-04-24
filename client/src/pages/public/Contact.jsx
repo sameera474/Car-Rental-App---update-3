@@ -1,4 +1,3 @@
-// File: client/src/pages/public/Contact.jsx
 import React, { useState } from "react";
 import {
   Container,
@@ -8,7 +7,7 @@ import {
   Button,
   Paper,
   Alert,
-  Divider, // Added import for Divider
+  Divider,
 } from "@mui/material";
 import MainLayout from "../../layouts/MainLayout";
 

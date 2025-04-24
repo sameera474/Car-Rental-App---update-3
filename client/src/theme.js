@@ -1,4 +1,3 @@
-// File: client/src/theme.js
 import { createTheme } from "@mui/material/styles";
 
 // Blue Theme (default)

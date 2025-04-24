@@ -1,4 +1,3 @@
-// File: api/index.js
 import serverless from "serverless-http";
 import express from "express";
 import cors from "cors";

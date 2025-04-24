@@ -1,5 +1,3 @@
-// File: client/src/pages/public/Home.jsx
-
 import React, { useEffect, useState } from "react";
 import {
   Container,
@@ -18,7 +16,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-import HeroCar from "../../assets/home-hero-car.png"; // Replace with your hero image
+import HeroCar from "../../assets/home-hero-car.png";
 
 const DEFAULT_CAR_IMAGE = "https://via.placeholder.com/300x150?text=No+Image";
 

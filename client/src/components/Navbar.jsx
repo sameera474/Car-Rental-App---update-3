@@ -1,4 +1,4 @@
-// File: client/src/components/NavBar.jsx
+
 import React, { useState } from "react";
 import {
   AppBar,
